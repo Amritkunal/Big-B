@@ -35,5 +35,22 @@ class ExampleUnitTest {
     assertEquals(3, LAB_GROUPS.size)
     assertEquals(listOf("GR1", "GR2", "GR3"), LAB_GROUPS.map { it.id })
   }
+
+  @Test
+  fun weekMatrix_showsBothC1AndC2Classes() {
+    val allClasses = KiitCivilTimetableData.getDefaultClasses()
+    val c1Count = allClasses.count { it.section.equals("C1", ignoreCase = true) }
+    val c2Count = allClasses.count { it.section.equals("C2", ignoreCase = true) }
+    assertTrue("Should have C1 classes", c1Count > 10)
+    assertTrue("Should have C2 classes", c2Count > 10)
+
+    // For Monday 09:00 - 10:00 slot (540 to 600), both C1 and C2 classes must be present
+    val mondaySlot1Classes = allClasses.filter {
+      it.dayIndex == 1 && it.startMinutes < 600 && it.endMinutes > 540
+    }
+    val sectionsInSlot1 = mondaySlot1Classes.map { it.section }.toSet()
+    assertTrue(sectionsInSlot1.contains("C1"))
+    assertTrue(sectionsInSlot1.contains("C2"))
+  }
 }
 

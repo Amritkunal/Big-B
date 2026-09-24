@@ -108,6 +108,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Edit
 import java.util.Calendar
 import com.example.ui.theme.MyApplicationTheme
+import com.example.util.rememberAppHaptics
 
 class MainActivity : ComponentActivity() {
 
@@ -145,6 +146,7 @@ fun TimetableAppScreen(
   modifier: Modifier = Modifier
 ) {
   val context = LocalContext.current
+  val haptics = rememberAppHaptics()
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val minimalClasses by viewModel.minimalDayClasses.collectAsStateWithLifecycle()
   val allClasses by viewModel.allClasses.collectAsStateWithLifecycle()
@@ -226,21 +228,36 @@ fun TimetableAppScreen(
       ) {
         NavigationBarItem(
           selected = uiState.activeTab == 0,
-          onClick = { viewModel.setActiveTab(0) },
+          onClick = {
+            if (uiState.activeTab != 0) {
+              haptics.sectionSwitch()
+              viewModel.setActiveTab(0)
+            }
+          },
           icon = { Icon(Icons.Default.CalendarToday, contentDescription = "Classes") },
           label = { Text("Classes") },
           modifier = Modifier.testTag("nav_item_daily")
         )
         NavigationBarItem(
           selected = uiState.activeTab == 1,
-          onClick = { viewModel.setActiveTab(1) },
+          onClick = {
+            if (uiState.activeTab != 1) {
+              haptics.sectionSwitch()
+              viewModel.setActiveTab(1)
+            }
+          },
           icon = { Icon(Icons.Default.School, contentDescription = "Faculty & Courses") },
           label = { Text("Faculty") },
           modifier = Modifier.testTag("nav_item_directory")
         )
         NavigationBarItem(
           selected = uiState.activeTab == 2,
-          onClick = { viewModel.setActiveTab(2) },
+          onClick = {
+            if (uiState.activeTab != 2) {
+              haptics.sectionSwitch()
+              viewModel.setActiveTab(2)
+            }
+          },
           icon = { Icon(Icons.Default.GridOn, contentDescription = "Week Matrix") },
           label = { Text("Week Matrix") },
           modifier = Modifier.testTag("nav_item_matrix")
@@ -289,7 +306,10 @@ fun TimetableAppScreen(
               Spacer(modifier = Modifier.height(6.dp))
               DaySelectorRow(
                 selectedDayIndex = uiState.selectedDayIndex,
-                onDaySelected = { viewModel.selectDay(it) }
+                onDaySelected = {
+                  haptics.click()
+                  viewModel.selectDay(it)
+                }
               )
             }
 
@@ -314,7 +334,10 @@ fun TimetableAppScreen(
                   color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
                   modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
-                    .clickable { viewModel.openLabGroupPicker() }
+                    .clickable {
+                      haptics.click()
+                      viewModel.openLabGroupPicker()
+                    }
                     .testTag("lab_group_quick_switch")
                 ) {
                   Row(
@@ -425,7 +448,10 @@ fun TimetableAppScreen(
                   isOngoing = isOngoing,
                   isOver = isOver,
                   selectedLabGroup = uiState.selectedLabGroup,
-                  onEditLabGroup = { viewModel.openLabGroupPicker() },
+                  onEditLabGroup = {
+                    haptics.click()
+                    viewModel.openLabGroupPicker()
+                  },
                   modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
               }
@@ -439,11 +465,11 @@ fun TimetableAppScreen(
         }
 
         2 -> {
-          // Section 3: Week Matrix as it is
+          // Section 3: Week Matrix showing all classes (both C1 + C2)
           TimetableMatrixView(
             allClasses = allClasses,
-            selectedSection = uiState.selectedSection,
-            selectedLabGroup = uiState.selectedLabGroup,
+            selectedSection = "ALL",
+            selectedLabGroup = "ALL",
             onClassClick = { cls ->
               viewModel.openEditDialog(cls)
             }
@@ -638,7 +664,10 @@ fun TimetableAppScreen(
   if (uiState.isLabGroupPickerOpen) {
     LabGroupPickerDialog(
       currentGroup = uiState.selectedLabGroup,
-      onGroupSelected = { viewModel.selectLabGroup(it) },
+      onGroupSelected = {
+        haptics.groupSelect()
+        viewModel.selectLabGroup(it)
+      },
       onDismiss = { viewModel.closeLabGroupPicker() }
     )
   }
