@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -108,17 +110,22 @@ class TimetableViewModel(application: Application) : AndroidViewModel(applicatio
   // Minimal classes for Section 1:
   // Shows classes only (C1 and C2 have same classes, faculties differ).
   // Lab classes show the user's saved lab group (one-time choice, persisted).
+  // Uses distinctUntilChanged on day & group to avoid recomputing on unrelated state changes (like tab or dialog changes).
+  private val minimalFilterFlow = _uiState
+    .map { Pair(it.selectedDayIndex, it.selectedLabGroup) }
+    .distinctUntilChanged()
+
   val minimalDayClasses: StateFlow<List<TimetableClass>> = combine(
     allClasses,
-    _uiState
-  ) { classes, state ->
-    val dayItems = classes.filter { it.dayIndex == state.selectedDayIndex }
+    minimalFilterFlow
+  ) { classes, (selectedDayIndex, selectedLabGroup) ->
+    val dayItems = classes.filter { it.dayIndex == selectedDayIndex }
     val theoryClasses = dayItems
       .filter { !it.isLab }
       .distinctBy { "${it.startMinutes}_${it.subjectShort}" }
     val labClasses = dayItems
       .filter { it.isLab }
-      .filter { it.labGroup == "ALL" || it.labGroup.equals(state.selectedLabGroup, ignoreCase = true) }
+      .filter { it.labGroup == "ALL" || it.labGroup.equals(selectedLabGroup, ignoreCase = true) }
       .distinctBy { "${it.startMinutes}_${it.subjectShort}" }
     (theoryClasses + labClasses).sortedBy { it.startMinutes }
   }.stateIn(

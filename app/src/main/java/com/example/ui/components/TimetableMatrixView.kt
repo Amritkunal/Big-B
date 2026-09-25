@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.AlertDialog
@@ -32,7 +31,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,7 +58,6 @@ import com.example.ui.theme.SubjectProbColor
 import com.example.ui.theme.SubjectSTWColor
 import com.example.ui.theme.SubjectSolidColor
 import com.example.ui.theme.SubjectSurveyColor
-import com.example.util.rememberAppHaptics
 
 data class MatrixSlot(
   val label: String,
@@ -94,7 +91,6 @@ fun TimetableMatrixView(
   onClassClick: (TimetableClass) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val haptics = rememberAppHaptics()
   val horizontalScroll = rememberScrollState()
   val pageVerticalScroll = rememberScrollState()
 
@@ -103,6 +99,23 @@ fun TimetableMatrixView(
   var activeLabGroupFilter by remember(selectedLabGroup) { mutableStateOf(selectedLabGroup) }
 
   var selectedClassForDetail by remember { mutableStateOf<TimetableClass?>(null) }
+
+  // High performance optimization: precompute slot classes once per filter change instead of on every frame
+  val slotClassesMap = remember(allClasses, activeSectionFilter, activeLabGroupFilter) {
+    val map = HashMap<Pair<Int, MatrixSlot>, List<TimetableClass>>()
+    for (day in MATRIX_DAYS) {
+      for (slot in MATRIX_PERIODS) {
+        val matching = allClasses.filter { item ->
+          item.dayIndex == day.second &&
+            item.startMinutes < slot.endMin && item.endMinutes > slot.startMin &&
+            (activeSectionFilter == "ALL" || item.section == "ALL" || item.section.equals(activeSectionFilter, ignoreCase = true)) &&
+            (activeLabGroupFilter == "ALL" || item.labGroup == "ALL" || item.labGroup.equals(activeLabGroupFilter, ignoreCase = true))
+        }.sortedWith(compareBy({ it.section }, { it.subjectShort }, { it.labGroup }))
+        map[Pair(day.second, slot)] = matching
+      }
+    }
+    map
+  }
 
   Column(
     modifier = modifier
@@ -213,7 +226,6 @@ fun TimetableMatrixView(
           FilterChip(
             selected = activeSectionFilter == "ALL",
             onClick = {
-              haptics.click()
               activeSectionFilter = "ALL"
             },
             label = { Text("All Classes (C1 + C2)", fontWeight = if (activeSectionFilter == "ALL") FontWeight.Bold else FontWeight.Normal) },
@@ -230,7 +242,6 @@ fun TimetableMatrixView(
           FilterChip(
             selected = activeSectionFilter == "C1",
             onClick = {
-              haptics.click()
               activeSectionFilter = "C1"
             },
             label = { Text("Section C1 Only", fontWeight = if (activeSectionFilter == "C1") FontWeight.Bold else FontWeight.Normal) },
@@ -243,7 +254,6 @@ fun TimetableMatrixView(
           FilterChip(
             selected = activeSectionFilter == "C2",
             onClick = {
-              haptics.click()
               activeSectionFilter = "C2"
             },
             label = { Text("Section C2 Only", fontWeight = if (activeSectionFilter == "C2") FontWeight.Bold else FontWeight.Normal) },
@@ -272,7 +282,6 @@ fun TimetableMatrixView(
           FilterChip(
             selected = activeLabGroupFilter == "ALL",
             onClick = {
-              haptics.click()
               activeLabGroupFilter = "ALL"
             },
             label = { Text("All Groups", fontSize = 11.sp) },
@@ -283,7 +292,6 @@ fun TimetableMatrixView(
             FilterChip(
               selected = activeLabGroupFilter == grp,
               onClick = {
-                haptics.click()
                 activeLabGroupFilter = grp
               },
               label = { Text("Group ${grp.removePrefix("GR")}", fontSize = 11.sp) },
@@ -379,17 +387,9 @@ fun TimetableMatrixView(
                 }
               }
 
-              // Classes for each period slot
+              // Classes for each period slot (retrieved instantly from precomputed map)
               MATRIX_PERIODS.forEach { slot ->
-                val matchingClasses = allClasses.filter { item ->
-                  item.dayIndex == dayIndex &&
-                    // Overlaps with this slot
-                    item.startMinutes < slot.endMin && item.endMinutes > slot.startMin &&
-                    // Section filter: when ALL, displays all classes for both C1 and C2
-                    (activeSectionFilter == "ALL" || item.section == "ALL" || item.section.equals(activeSectionFilter, ignoreCase = true)) &&
-                    // Lab group filter
-                    (activeLabGroupFilter == "ALL" || item.labGroup == "ALL" || item.labGroup.equals(activeLabGroupFilter, ignoreCase = true))
-                }.sortedWith(compareBy({ it.section }, { it.subjectShort }, { it.labGroup }))
+                val matchingClasses = slotClassesMap[Pair(dayIndex, slot)].orEmpty()
 
                 Surface(
                   modifier = Modifier
@@ -407,8 +407,7 @@ fun TimetableMatrixView(
                     Column(
                       modifier = Modifier
                         .fillMaxSize()
-                        .padding(4.dp)
-                        .verticalScroll(rememberScrollState()),
+                        .padding(4.dp),
                       verticalArrangement = Arrangement.spacedBy(3.5.dp)
                     ) {
                       matchingClasses.forEach { cls ->
@@ -450,7 +449,6 @@ fun TimetableMatrixView(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(6.dp))
                             .clickable {
-                              haptics.click()
                               selectedClassForDetail = cls
                             },
                           shape = RoundedCornerShape(6.dp),

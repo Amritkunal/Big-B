@@ -46,16 +46,18 @@ fun CourseFacultyDirectoryView(
 ) {
   var searchQuery by remember { mutableStateOf("") }
 
-  val mappings = KiitCivilTimetableData.courseFacultyMappings.filter {
-    searchQuery.isBlank() ||
-      it.fullName.contains(searchQuery, ignoreCase = true) ||
-      it.shortName.contains(searchQuery, ignoreCase = true) ||
-      it.code.contains(searchQuery, ignoreCase = true) ||
-      it.sectionC1Faculty.contains(searchQuery, ignoreCase = true) ||
-      it.sectionC2Faculty.contains(searchQuery, ignoreCase = true) ||
-      it.labGroup1Faculty.contains(searchQuery, ignoreCase = true) ||
-      it.labGroup2Faculty.contains(searchQuery, ignoreCase = true) ||
-      it.labGroup3Faculty.contains(searchQuery, ignoreCase = true)
+  val mappings = remember(searchQuery) {
+    KiitCivilTimetableData.courseFacultyMappings.filter {
+      searchQuery.isBlank() ||
+        it.fullName.contains(searchQuery, ignoreCase = true) ||
+        it.shortName.contains(searchQuery, ignoreCase = true) ||
+        it.code.contains(searchQuery, ignoreCase = true) ||
+        it.sectionC1Faculty.contains(searchQuery, ignoreCase = true) ||
+        it.sectionC2Faculty.contains(searchQuery, ignoreCase = true) ||
+        it.labGroup1Faculty.contains(searchQuery, ignoreCase = true) ||
+        it.labGroup2Faculty.contains(searchQuery, ignoreCase = true) ||
+        it.labGroup3Faculty.contains(searchQuery, ignoreCase = true)
+    }
   }
 
   Column(
@@ -118,7 +120,10 @@ fun CourseFacultyDirectoryView(
       verticalArrangement = Arrangement.spacedBy(10.dp),
       modifier = Modifier.fillMaxWidth()
     ) {
-      items(mappings) { course ->
+      items(
+        items = mappings,
+        key = { it.code }
+      ) { course ->
         Card(
           shape = RoundedCornerShape(16.dp),
           colors = CardDefaults.cardColors(

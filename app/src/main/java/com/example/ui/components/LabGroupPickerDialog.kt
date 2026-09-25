@@ -27,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.util.rememberAppHaptics
 
 data class LabGroupOption(
   val id: String,
@@ -59,8 +58,6 @@ fun LabGroupPickerDialog(
   onGroupSelected: (String) -> Unit,
   onDismiss: () -> Unit
 ) {
-  val haptics = rememberAppHaptics()
-
   AlertDialog(
     onDismissRequest = onDismiss,
     icon = {
@@ -94,7 +91,6 @@ fun LabGroupPickerDialog(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .clickable {
-                  haptics.groupSelect()
                   onGroupSelected(option.id)
                 }
                 .testTag("lab_group_option_${option.id}"),
@@ -116,7 +112,6 @@ fun LabGroupPickerDialog(
                 RadioButton(
                   selected = isSelected,
                   onClick = {
-                    haptics.groupSelect()
                     onGroupSelected(option.id)
                   }
                 )
@@ -143,10 +138,7 @@ fun LabGroupPickerDialog(
     },
     confirmButton = {
       TextButton(
-        onClick = {
-          haptics.click()
-          onDismiss()
-        },
+        onClick = onDismiss,
         modifier = Modifier.testTag("lab_group_dialog_done")
       ) {
         Text("Done")

@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.util.rememberAppHaptics
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -38,7 +37,6 @@ fun BatchFilterBar(
   onLabGroupChanged: (String) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val haptics = rememberAppHaptics()
   Surface(
     modifier = modifier
       .fillMaxWidth()
@@ -101,7 +99,6 @@ fun BatchFilterBar(
           FilterChip(
             selected = isSelected,
             onClick = {
-              haptics.groupSelect()
               onSectionChanged(sec)
             },
             label = {
@@ -149,7 +146,6 @@ fun BatchFilterBar(
           FilterChip(
             selected = isSelected,
             onClick = {
-              haptics.groupSelect()
               onLabGroupChanged(grp)
             },
             label = {

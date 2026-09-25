@@ -108,7 +108,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Edit
 import java.util.Calendar
 import com.example.ui.theme.MyApplicationTheme
-import com.example.util.rememberAppHaptics
 
 class MainActivity : ComponentActivity() {
 
@@ -146,7 +145,6 @@ fun TimetableAppScreen(
   modifier: Modifier = Modifier
 ) {
   val context = LocalContext.current
-  val haptics = rememberAppHaptics()
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val minimalClasses by viewModel.minimalDayClasses.collectAsStateWithLifecycle()
   val allClasses by viewModel.allClasses.collectAsStateWithLifecycle()
@@ -230,7 +228,6 @@ fun TimetableAppScreen(
           selected = uiState.activeTab == 0,
           onClick = {
             if (uiState.activeTab != 0) {
-              haptics.sectionSwitch()
               viewModel.setActiveTab(0)
             }
           },
@@ -242,7 +239,6 @@ fun TimetableAppScreen(
           selected = uiState.activeTab == 1,
           onClick = {
             if (uiState.activeTab != 1) {
-              haptics.sectionSwitch()
               viewModel.setActiveTab(1)
             }
           },
@@ -254,7 +250,6 @@ fun TimetableAppScreen(
           selected = uiState.activeTab == 2,
           onClick = {
             if (uiState.activeTab != 2) {
-              haptics.sectionSwitch()
               viewModel.setActiveTab(2)
             }
           },
@@ -274,20 +269,8 @@ fun TimetableAppScreen(
       AnimatedContent(
         targetState = uiState.activeTab,
         transitionSpec = {
-          val direction = if (targetState > initialState) 1 else -1
-          (slideInHorizontally(
-            animationSpec = tween(durationMillis = 240, easing = FastOutSlowInEasing),
-            initialOffsetX = { fullWidth -> (fullWidth * 0.12f * direction).toInt() }
-          ) + fadeIn(
-            animationSpec = tween(durationMillis = 240, easing = FastOutSlowInEasing)
-          )).togetherWith(
-            slideOutHorizontally(
-              animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
-              targetOffsetX = { fullWidth -> (-fullWidth * 0.12f * direction).toInt() }
-            ) + fadeOut(
-              animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing)
-            )
-          )
+          fadeIn(animationSpec = tween(durationMillis = 140))
+            .togetherWith(fadeOut(animationSpec = tween(durationMillis = 100)))
         },
         label = "SectionTransition",
         modifier = Modifier.fillMaxSize()
@@ -307,7 +290,6 @@ fun TimetableAppScreen(
               DaySelectorRow(
                 selectedDayIndex = uiState.selectedDayIndex,
                 onDaySelected = {
-                  haptics.click()
                   viewModel.selectDay(it)
                 }
               )
@@ -335,7 +317,6 @@ fun TimetableAppScreen(
                   modifier = Modifier
                     .clip(RoundedCornerShape(10.dp))
                     .clickable {
-                      haptics.click()
                       viewModel.openLabGroupPicker()
                     }
                     .testTag("lab_group_quick_switch")
@@ -449,7 +430,6 @@ fun TimetableAppScreen(
                   isOver = isOver,
                   selectedLabGroup = uiState.selectedLabGroup,
                   onEditLabGroup = {
-                    haptics.click()
                     viewModel.openLabGroupPicker()
                   },
                   modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
@@ -665,7 +645,6 @@ fun TimetableAppScreen(
     LabGroupPickerDialog(
       currentGroup = uiState.selectedLabGroup,
       onGroupSelected = {
-        haptics.groupSelect()
         viewModel.selectLabGroup(it)
       },
       onDismiss = { viewModel.closeLabGroupPicker() }
