@@ -99,7 +99,6 @@ import com.example.ui.components.ClassCard
 import com.example.ui.components.CourseFacultyDirectoryView
 import com.example.ui.components.CoursesDirectorySheet
 import com.example.ui.components.AppLogoBadge
-import com.example.ui.components.CustomizeLogoDialog
 import com.example.ui.components.DAYS_LIST
 import com.example.ui.components.DaySelectorRow
 import com.example.ui.components.LabGroupPickerDialog
@@ -109,7 +108,6 @@ import com.example.ui.components.PdfPreviewDialog
 import com.example.ui.components.TimetableMatrixView
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.Edit
-import java.io.File
 import java.util.Calendar
 import com.example.ui.theme.MyApplicationTheme
 
@@ -157,8 +155,6 @@ fun TimetableAppScreen(
   val isProcessingUpload by viewModel.isProcessingUpload.collectAsStateWithLifecycle()
 
   var isThemeDialogOpen by remember { mutableStateOf(false) }
-  var isLogoDialogOpen by remember { mutableStateOf(false) }
-  var logoCacheBuster by remember { mutableStateOf(System.currentTimeMillis()) }
   val snackbarHostState = remember { SnackbarHostState() }
 
   // PDF or Document file picker launcher
@@ -204,15 +200,11 @@ fun TimetableAppScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-              .clip(RoundedCornerShape(10.dp))
-              .clickable { isLogoDialogOpen = true }
               .padding(horizontal = 8.dp, vertical = 4.dp)
-              .testTag("header_logo_title_button")
+              .testTag("header_logo_title")
           ) {
             AppLogoBadge(
-              size = 32.dp,
-              cacheBuster = logoCacheBuster,
-              onClick = { isLogoDialogOpen = true }
+              size = 32.dp
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
@@ -224,16 +216,6 @@ fun TimetableAppScreen(
           }
         },
         actions = {
-          IconButton(
-            onClick = { isLogoDialogOpen = true },
-            modifier = Modifier.testTag("topbar_logo_button")
-          ) {
-            Icon(
-              imageVector = Icons.Default.Image,
-              contentDescription = "Change App Logo",
-              tint = MaterialTheme.colorScheme.primary
-            )
-          }
           IconButton(
             onClick = { isThemeDialogOpen = true },
             modifier = Modifier.testTag("topbar_theme_button")
@@ -605,35 +587,6 @@ fun TimetableAppScreen(
               modifier = Modifier.testTag("switch_dark_theme")
             )
           }
-
-          // App Logo Customization Action
-          Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-          ) {
-            Column(modifier = Modifier.weight(1f)) {
-              Text(
-                text = "App Main Logo",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
-              )
-              Text(
-                text = "Select custom image or reset to Big B logo",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-              )
-            }
-            TextButton(
-              onClick = {
-                isThemeDialogOpen = false
-                isLogoDialogOpen = true
-              },
-              modifier = Modifier.testTag("btn_theme_change_logo")
-            ) {
-              Text("Customize")
-            }
-          }
         }
       },
       confirmButton = {
@@ -709,18 +662,6 @@ fun TimetableAppScreen(
         viewModel.selectLabGroup(it)
       },
       onDismiss = { viewModel.closeLabGroupPicker() }
-    )
-  }
-
-  // Manual Logo Customization Dialog
-  if (isLogoDialogOpen) {
-    val customFile = remember(logoCacheBuster) { File(context.filesDir, "custom_app_logo.png") }
-    CustomizeLogoDialog(
-      customLogoFile = customFile,
-      onLogoUpdated = {
-        logoCacheBuster = System.currentTimeMillis()
-      },
-      onDismiss = { isLogoDialogOpen = false }
     )
   }
 }
