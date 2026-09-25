@@ -37,10 +37,10 @@ data class CourseFacultyMapping(
     }
 }
 
-object KiitCivilTimetableData {
+object CivilTimetableData {
 
   const val TIMETABLE_NOTICE_TITLE = "School of Civil Engineering - 3rd Semester B.Tech"
-  const val TIMETABLE_REF_NO = "KIIT/DU/SCE/219/26"
+  const val TIMETABLE_REF_NO = "DU/SCE/219/26"
   const val TIMETABLE_EFFECTIVE_DATE = "17-09-2026 (Rev-3)"
 
   val courseFacultyMappings = listOf(

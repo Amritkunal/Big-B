@@ -6,7 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 import com.example.data.local.AppDatabase
 import com.example.data.model.TimetableClass
 import com.example.data.repository.TimetableRepository
@@ -41,7 +41,7 @@ data class TimetableUiState(
 class TimetableViewModel(application: Application) : AndroidViewModel(application) {
 
   private val repository: TimetableRepository
-  private val prefs = application.getSharedPreferences("kiit_timetable_prefs", Context.MODE_PRIVATE)
+  private val prefs = application.getSharedPreferences("big_b_timetable_prefs", Context.MODE_PRIVATE)
 
   private val _uiState = MutableStateFlow(
     TimetableUiState(
@@ -54,7 +54,7 @@ class TimetableViewModel(application: Application) : AndroidViewModel(applicatio
   private val _uploadedPdfBitmap = MutableStateFlow<Bitmap?>(null)
   val uploadedPdfBitmap: StateFlow<Bitmap?> = _uploadedPdfBitmap.asStateFlow()
 
-  private val _uploadedFileName = MutableStateFlow<String?>("KIIT_Civil_3rdSem_Rev3.pdf")
+  private val _uploadedFileName = MutableStateFlow<String?>("Civil_3rdSem_Rev3.pdf")
   val uploadedFileName: StateFlow<String?> = _uploadedFileName.asStateFlow()
 
   private val _isProcessingUpload = MutableStateFlow(false)
@@ -235,7 +235,7 @@ class TimetableViewModel(application: Application) : AndroidViewModel(applicatio
         subjectName = subjectName.trim(),
         subjectCode = subjectCode.trim(),
         facultyInitials = facultyInitials.trim(),
-        facultyName = facultyName.trim().ifEmpty { KiitCivilTimetableData.getFacultyName(facultyInitials) },
+        facultyName = facultyName.trim().ifEmpty { CivilTimetableData.getFacultyName(facultyInitials) },
         section = section,
         labGroup = labGroup,
         room = room.trim().ifEmpty { "Civil Block" },
@@ -277,12 +277,12 @@ class TimetableViewModel(application: Application) : AndroidViewModel(applicatio
     }
   }
 
-  fun resetToDefaultKiitSchedule() {
+  fun resetToDefaultSchedule() {
     viewModelScope.launch {
-      repository.resetToDefaultKiitSchedule()
+      repository.resetToDefaultSchedule()
       _uiState.value = _uiState.value.copy(
         isResetConfirmOpen = false,
-        snackbarMessage = "Reset to official KIIT Civil Engineering 3rd Sem Timetable!"
+        snackbarMessage = "Reset to official Civil Engineering 3rd Sem Timetable!"
       )
     }
   }

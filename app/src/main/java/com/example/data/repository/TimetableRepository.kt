@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 import com.example.data.local.TimetableDao
 import com.example.data.model.TimetableClass
 import kotlinx.coroutines.Dispatchers
@@ -16,15 +16,15 @@ class TimetableRepository(private val timetableDao: TimetableDao) {
 
   suspend fun ensureDefaultData() = withContext(Dispatchers.IO) {
     if (timetableDao.getClassCount() == 0) {
-      timetableDao.insertClasses(KiitCivilTimetableData.getDefaultClasses())
+      timetableDao.insertClasses(CivilTimetableData.getDefaultClasses())
     } else {
       timetableDao.syncFmC1Faculty()
     }
   }
 
-  suspend fun resetToDefaultKiitSchedule() = withContext(Dispatchers.IO) {
+  suspend fun resetToDefaultSchedule() = withContext(Dispatchers.IO) {
     timetableDao.clearAllClasses()
-    timetableDao.insertClasses(KiitCivilTimetableData.getDefaultClasses())
+    timetableDao.insertClasses(CivilTimetableData.getDefaultClasses())
   }
 
   suspend fun insertClass(timetableClass: TimetableClass) = withContext(Dispatchers.IO) {

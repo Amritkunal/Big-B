@@ -1,6 +1,6 @@
 {
-  "name": "KIIT Civil Timetable",
-  "description": "Smart KIIT University Civil Engineering timetable viewer with PDF upload, manual class management, batch/group filtering, and daily schedule.",
+  "name": "Big B",
+  "description": "Smart timetable viewer with PDF upload, manual class management, batch/group filtering, and daily schedule.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

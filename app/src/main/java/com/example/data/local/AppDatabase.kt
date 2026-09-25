@@ -20,8 +20,10 @@ abstract class AppDatabase : RoomDatabase() {
         val instance = Room.databaseBuilder(
           context.applicationContext,
           AppDatabase::class.java,
-          "kiit_civil_timetable.db"
-        ).build()
+          "big_b_timetable.db"
+        )
+        .fallbackToDestructiveMigration()
+        .build()
         INSTANCE = instance
         instance
       }

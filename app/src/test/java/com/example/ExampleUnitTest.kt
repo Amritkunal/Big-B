@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 import com.example.ui.components.DAYS_LIST
 import com.example.ui.components.LAB_GROUPS
 import org.junit.Assert.assertEquals
@@ -23,7 +23,7 @@ class ExampleUnitTest {
 
   @Test
   fun courseFacultyMappings_hasFmWithJppAndParomita() {
-    val fmMappings = KiitCivilTimetableData.courseFacultyMappings.firstOrNull { it.shortName == "FM" }
+    val fmMappings = CivilTimetableData.courseFacultyMappings.firstOrNull { it.shortName == "FM" }
     assertNotNull(fmMappings)
     assertEquals("JPP", fmMappings?.sectionC1Faculty)
     assertEquals("Paromita", fmMappings?.sectionC2Faculty)
@@ -38,7 +38,7 @@ class ExampleUnitTest {
 
   @Test
   fun weekMatrix_showsBothC1AndC2Classes() {
-    val allClasses = KiitCivilTimetableData.getDefaultClasses()
+    val allClasses = CivilTimetableData.getDefaultClasses()
     val c1Count = allClasses.count { it.section.equals("C1", ignoreCase = true) }
     val c2Count = allClasses.count { it.section.equals("C2", ignoreCase = true) }
     assertTrue("Should have C1 classes", c1Count > 10)

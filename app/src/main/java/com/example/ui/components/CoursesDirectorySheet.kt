@@ -39,7 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 
 @Composable
 fun CoursesDirectorySheet(
@@ -80,7 +80,7 @@ fun CoursesDirectorySheet(
           fontWeight = FontWeight.Bold
         )
         Text(
-          text = "School of Civil Engineering (SCE) · KIIT Deemed to be University",
+          text = "School of Civil Engineering (SCE)",
           style = MaterialTheme.typography.bodySmall,
           color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -107,12 +107,12 @@ fun CoursesDirectorySheet(
       Tab(
         selected = selectedTab == 0,
         onClick = { selectedTab = 0 },
-        text = { Text("Courses (${KiitCivilTimetableData.courses.size})") }
+        text = { Text("Courses (${CivilTimetableData.courses.size})") }
       )
       Tab(
         selected = selectedTab == 1,
         onClick = { selectedTab = 1 },
-        text = { Text("Faculty (${KiitCivilTimetableData.facultyList.size})") }
+        text = { Text("Faculty (${CivilTimetableData.facultyList.size})") }
       )
     }
 
@@ -120,7 +120,7 @@ fun CoursesDirectorySheet(
 
     if (selectedTab == 0) {
       // Courses List
-      val filteredCourses = KiitCivilTimetableData.courses.filter {
+      val filteredCourses = CivilTimetableData.courses.filter {
         searchQuery.isBlank() ||
           it.fullName.contains(searchQuery, ignoreCase = true) ||
           it.shortName.contains(searchQuery, ignoreCase = true) ||
@@ -194,7 +194,7 @@ fun CoursesDirectorySheet(
       }
     } else {
       // Faculty List
-      val filteredFaculty = KiitCivilTimetableData.facultyList.filter {
+      val filteredFaculty = CivilTimetableData.facultyList.filter {
         searchQuery.isBlank() ||
           it.fullName.contains(searchQuery, ignoreCase = true) ||
           it.initials.contains(searchQuery, ignoreCase = true)

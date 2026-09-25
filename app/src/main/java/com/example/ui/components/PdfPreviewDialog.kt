@@ -106,7 +106,7 @@ fun PdfPreviewDialog(
                 fontWeight = FontWeight.Bold
               )
               Text(
-                text = fileName ?: "KIIT Civil Engineering Notice",
+                text = fileName ?: "Civil Engineering Notice",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
               )
@@ -168,7 +168,7 @@ fun PdfPreviewDialog(
               )
               Spacer(modifier = Modifier.height(12.dp))
               Text(
-                text = "Official KIIT Civil Timetable (Rev-3)",
+                text = "Official Civil Timetable (Rev-3)",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

@@ -38,7 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 
 @Composable
 fun CourseFacultyDirectoryView(
@@ -47,7 +47,7 @@ fun CourseFacultyDirectoryView(
   var searchQuery by remember { mutableStateOf("") }
 
   val mappings = remember(searchQuery) {
-    KiitCivilTimetableData.courseFacultyMappings.filter {
+    CivilTimetableData.courseFacultyMappings.filter {
       searchQuery.isBlank() ||
         it.fullName.contains(searchQuery, ignoreCase = true) ||
         it.shortName.contains(searchQuery, ignoreCase = true) ||

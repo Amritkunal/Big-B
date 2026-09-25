@@ -8,7 +8,7 @@ import android.graphics.Paint
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 import com.example.data.model.TimetableClass
 import java.io.File
 import java.io.FileOutputStream
@@ -66,14 +66,14 @@ object PdfTimetableParser {
   }
 
   /**
-   * Analyzes parsed/uploaded content to detect if it matches KIIT Civil timetable
+   * Analyzes parsed/uploaded content to detect if it matches Civil timetable
    * or parses custom text input.
    */
   fun parseTimetableFromText(rawText: String): List<TimetableClass> {
-    // If text contains KIIT or Civil keywords, return the comprehensive structured schedule
+    // If text contains Civil keywords, return the comprehensive structured schedule
     val textLower = rawText.lowercase()
-    if (textLower.contains("kiit") || textLower.contains("civil") || textLower.contains("fluid mechanics") || textLower.contains("ce21001")) {
-      return KiitCivilTimetableData.getDefaultClasses()
+    if (textLower.contains("big b") || textLower.contains("civil") || textLower.contains("fluid mechanics") || textLower.contains("ce21001")) {
+      return CivilTimetableData.getDefaultClasses()
     }
 
     // Fallback: parse simple day and time lines
@@ -133,6 +133,6 @@ object PdfTimetableParser {
       }
     }
 
-    return if (result.isNotEmpty()) result else KiitCivilTimetableData.getDefaultClasses()
+    return if (result.isNotEmpty()) result else CivilTimetableData.getDefaultClasses()
   }
 }

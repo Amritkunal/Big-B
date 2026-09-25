@@ -145,13 +145,13 @@ fun TimetableMatrixView(
         Spacer(modifier = Modifier.width(10.dp))
         Column {
           Text(
-            text = "KIIT School of Civil Engineering",
+            text = "Big B · School of Civil Engineering",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onPrimaryContainer
           )
           Text(
-            text = "3rd Semester B.Tech Timetable (Rev-3) · Ref: KIIT/DU/SCE/219/26",
+            text = "3rd Semester B.Tech Timetable (Rev-3) · Ref: DU/SCE/219/26",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
           )

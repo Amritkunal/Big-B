@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.data.defaultdata.KiitCivilTimetableData
+import com.example.data.defaultdata.CivilTimetableData
 import com.example.data.model.TimetableClass
 
 data class PeriodSlotPreset(
@@ -158,9 +158,9 @@ fun AddEditClassDialog(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // Quick Pick KIIT Civil Course Presets
+        // Quick Pick Course Presets
         Text(
-          text = "Quick Fill KIIT Subject:",
+          text = "Quick Fill Subject:",
           style = MaterialTheme.typography.labelMedium,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.primary
@@ -170,7 +170,7 @@ fun AddEditClassDialog(
           horizontalArrangement = Arrangement.spacedBy(6.dp),
           verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-          KiitCivilTimetableData.courses.forEach { course ->
+          CivilTimetableData.courses.forEach { course ->
             val isCurrent = subjectShort.equals(course.shortName, ignoreCase = true)
             FilterChip(
               selected = isCurrent,
@@ -329,7 +329,7 @@ fun AddEditClassDialog(
             onValueChange = {
               facultyInitials = it
               if (facultyName.isBlank() || facultyName.startsWith("Prof.")) {
-                facultyName = KiitCivilTimetableData.getFacultyName(it)
+                facultyName = CivilTimetableData.getFacultyName(it)
               }
             },
             label = { Text("Faculty Initials (e.g. JPP)") },
